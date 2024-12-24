@@ -1,0 +1,11 @@
+name: First Workflow 
+on: push
+jobs:
+  listing-and-reading-readme-files:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: list-all-files
+        run: ls 
+    
+      - name:
+        run: cat README.md

@@ -4,8 +4,11 @@ jobs:
   listing-and-reading-readme-files:
     runs-on: ubuntu-22.04
     steps:
+      - name: checkout-repo
+        uses: actions/checkout@v4
+
       - name: list-all-files
         run: ls 
     
-      - name:
+      - name: play-with-files
         run: cat README.md

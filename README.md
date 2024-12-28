@@ -17,13 +17,35 @@
 - the mapping between the `CMD` and `ENTRYPOINT` in dockerfile to k8s yaml definition : 
 ![alt text](image-6.png)
 
-### How to reference env vars from config maps : 
+
+## Different status of a POD
+![alt text](image-8.png)
+
+
+## How to reference env vars from config maps : 
 ![alt text](image-7.png)
 
 ## What is the replicaset ?
 - used to ensure that we always have the desired number of pods running and up at all time
 - used for scalling the loads across multiple instances
 
+
+## Readiness Probes : 
+![alt text](image-9.png)
+
+## Liveness Probes : 
+![alt text](image-10.png)
+
+## The Canary Deployment Strategy : 
+
+![alt text](image-11.png)
+
+- we can use a very popular tool like Istio to handle this strategy
+- Canary strategy is basically distribute the traffic over the new and old deployments by following these rules : 
+    - let the traffic be distributed across both deployments
+    - reduce the number of traffic to the new deployment version (in plain k8s without istio, we could simply reduce the number of pods from the new deployment version so it takes less percentage of the traffic) 
+
+--------
 # CI/CD using Github Actions
 
 ## What is CI/CD ? 

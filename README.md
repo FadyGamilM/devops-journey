@@ -45,6 +45,20 @@
     - let the traffic be distributed across both deployments
     - reduce the number of traffic to the new deployment version (in plain k8s without istio, we could simply reduce the number of pods from the new deployment version so it takes less percentage of the traffic) 
 
+
+## Services in K8s: 
+### Endpoint in ClusterIP Service ? 
+- the `Endpoint` is simple the connection between the clusterIp svc and the pod/s that this service forwards the traffik to.
+- So for example if we have 2 instances of the same pod that have label `app=BE` and the svc select this label, and we accidentaly created a new deployment with a pod that has this label by accident, the endpoint field of the svc will have 3 endpoints instead of 2 and we will catch that we did something wrong from there.
+
+### Network Polciies : 
+- What is the ingress and egress rules ? 
+![alt text](image-13.png)
+
+- we might need to specify network policy to ensure that only the Backend pod can talk to the db 
+- so this means we only need an ingress rule (according to the db pod) from the backend pod and on this specific port only 
+![alt text](image-14.png)
+
 --------
 # CI/CD using Github Actions
 

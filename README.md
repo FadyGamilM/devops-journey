@@ -83,3 +83,101 @@ It's a way to automate your development and deployment phases.
 
 ## Notes On workflows : 
 ### your jobs are running on a separate virtual machine `Runner`, so they have no access on your codebase (repo), so you have to allow the job to clone the repo to be able to access the files and folders.
+
+### The default behaviour of a workflow is to run jobs in parallel, so if your flow depends on running the jobs in sequence use `needs` field in the jobs
+```yaml
+name: First Workflow 
+on: push
+jobs:
+  
+  build-job:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout-repo
+        uses: actions/checkout@v4
+
+      - name: list-all-files
+        run: ls 
+    
+      - name: create-test-file
+        run: touch username.txt
+
+
+  test-job:
+    needs: [build-job] # so we can pass an array of jobs 
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout-repo
+        uses: actions/checkout@v4
+
+      - name: list-all-files
+        run: ls 
+    
+      - name: play-with-files
+        run: cat username.txt # this job will fail because it doesn't see the changes from the 1st job
+    
+  deploy-job:
+    needs: [test-job] 
+    runs-on: ubuntu-22.04
+    steps:
+      - name: deploy-flow
+        uses: bla bla
+
+```
+
+### But we often will need to share files between jobs, for example you might have a java app and you need to build it to get a .jar file and then use ths .jar file to be tested in the test-job, so to do this use the upload and download artifact actions 
+```yaml
+name: First Workflow 
+on: push
+jobs:
+  
+  build-job:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout-repo
+        uses: actions/checkout@v4
+
+      - name: list-all-files
+        run: ls 
+    
+      - name: create-test-file
+        run: touch username.txt
+      
+      - name: upload required files for other jobs
+        uses: actions/upload-artifact@v3
+        with: 
+          name: username-credentials-file # the name u will need to download this artifact in later jobs 
+          path: username.txt
+
+
+  test-job:
+    needs: [build-job] # so we can pass an array of jobs 
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout-repo
+        uses: actions/checkout@v4
+
+      - name: list-all-files
+        run: ls 
+
+      - name: upload required files for other jobs
+        uses: actions/download-artifact@v3
+        with: 
+          name: username-credentials-file 
+    
+      - name: play-with-files
+        run: cat username.txt # this job will fail because it doesn't see the changes from the 1st job
+    
+  deploy-job:
+    needs: [test-job] 
+    runs-on: ubuntu-22.04
+    steps:
+      - name: upload required files for other jobs
+        uses: actions/download-artifact@v3
+        with: 
+          name: username-credentials-file 
+    
+      - name: deploy-flow
+        uses: bla bla
+
+```
